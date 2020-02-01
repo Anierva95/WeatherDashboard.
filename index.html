@@ -42,25 +42,26 @@
       </nav>
     <div class="columns">
 
-        <div class="column is-one-quarter small-side">
+        <div id ="searchqueries" class="column is-one-quarter small-side">
             <div class="box">
                 <p><strong>Which city?</strong></p>
-                <input class="input" placeholder="Ex: New York City, NY">
-                <button class="button is-primary">Search</button>
+                <input id="searchbar" class="input" placeholder="Ex: New York City, NY">
+                <button id="searchbutton" class="button is-primary">Search</button>
             </div>
-            <div class="box">Past city query</div>
-            <div class="box">Past city query</div>
-            <div class="box">Past city query</div>
-            <div class="box">Past city query</div>
-            <div class="box">Past city query</div>
+
 
 
         </div>
 
         <div class="column is-three-quarters wide-side">
           <box class="box"><h1><strong>Current Weather:</strong></h1>
-            <box class="box"><h1>Some weather</h1>
-            <p>And some other weather facts</p></box>
+            <box class="box is-paddingless">
+                <h1 id="currentCity" class="is-size-3">Welcome! Search to get started!</h1><br>
+                <p id="currentTemp" class="is-size-1"></p><br>
+                <p id="currentHumid"></p><br>
+                <p id="currentWind"></p><br><br>
+                <p id="currentUV"></p>
+            </box>
             </box>
           <box class="box"><h1 class ="is-full clearfix"><div><strong>Five-Day Forecast:</strong></h1>
             <div class="tile is-ancestor is-gapless">
@@ -88,13 +89,41 @@
 </html>
 
 <script>
-    var queryURL = "api.openweathermap.org/data/2.5/forecast?q={Hillsborough},{country code}";
+    // On Click  function to initiate search
+    $("#searchbutton").click(function(){
+    
+    // Storing data for Ajax call
+    var userInput = $("#searchbar").val();
+    var APIKey = "02daff08193d9225a26eb2edb0d88351";
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + userInput + "&appid=" + APIKey;
+    console.log(userInput);
+    
+    // Creating Bulma box for each past search query
+    let newBox = $("<box>").attr("class","box");
+    let queryList = $("#searchqueries");
+    queryList.append(newBox.text(userInput));
+    
 
+    // Ajax call for Weather API data
     $.ajax({
         method: "GET",
         url: queryURL
     }).then(function(response) {
         console.log(response);
-    });
+
+
+        // Storing relevant data from response
+        let currentCityName = response.name;
+        let currentHumid = response.main.humidity + "%";
+        let currentWind = (response.wind.speed * 2.23694).toFixed(2) +  " mph";
+        let currentTemp = (response.main.temp * 9/5 - 459.67).toFixed(0);
+
+        // Grab elements to display current city info
+        $("#currentTemp").text(currentTemp);
+        $("#currentCity").text(currentCityName);
+        $("#currentHumid").text(currentHumid);
+        $("#currentWind").text(currentWind);
+    })});
+
 </script>
 
