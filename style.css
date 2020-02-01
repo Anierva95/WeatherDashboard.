@@ -1,0 +1,36 @@
+html {
+    text-align: center;
+}
+
+.small-side {
+    background-color: #3AAFA9;
+    height: 120vh;
+}
+
+.button {
+    background-color: #3AAFA9;
+    margin-top: 15px;
+}
+
+.wide-side {
+    background-color: #DEF2f1;
+    height: 120vh;
+}
+
+.box {
+    margin: 20px;
+}
+
+.box p,
+.box h1 {
+    text-align: center;
+    display: inline;
+}
+
+input {
+    margin: 0;
+}
+
+.five {
+    margin-left: 10px;
+}
