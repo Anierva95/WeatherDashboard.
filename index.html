@@ -95,6 +95,7 @@
     $(document).ajaxError(function() {
     $(".errorbox").removeClass("hide");
     });
+    
     // On Click  function to initiate search
     $("#searchbutton").click(function(){
     
@@ -115,8 +116,8 @@
     console.log(userInput);
     
     // Creating Bulma box for each past search query
-    let newBox = $("<box>").attr("class","box");
-    let queryList = $("#searchqueries");
+    const newBox = $("<box>").attr("class","box");
+    const queryList = $("#searchqueries");
     queryList.append(newBox.text(userInput));
     
 
@@ -140,7 +141,7 @@
         $("#currentHumid").text(currentHumid);
         $("#currentWind").text(currentWind);
 
-        // Storying some data for UV Ajax call
+        // Storying data for UV Ajax call
         const currentLat = response.coord.lon;
         const currentLong = response.coord.lat;
         const UVquery = "http://api.openweathermap.org/data/2.5/uvi?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
@@ -157,6 +158,16 @@
 
             // Display UV index
             $("#currentUV").text(uvIndex);
+
+            // Query for 5 day Forecast
+            const fiveQuery = "http://api.openweathermap.org/data/2.5/forecast?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
+
+            $.ajax({
+                method: "GET",
+                url: fiveQuery
+            }).then(function(responseFive) {
+                console.log(responseFive);
+            });
         });
 
         
