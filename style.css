@@ -41,3 +41,16 @@ input {
     margin-top: 17px;
 }
 
+.currentDetails {
+    margin-bottom: 10px;
+}
+
+.errorbox {
+    background-color: red;
+    color: white;
+    font-size: 20px;
+}
+
+.hide {
+    display: none;
+}

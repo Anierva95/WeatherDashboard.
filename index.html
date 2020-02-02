@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://kit.fontawesome.com/4a5535eb48.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
@@ -48,6 +49,7 @@
                 <input id="searchbar" class="input" placeholder="Ex: New York City, NY">
                 <button id="searchbutton" class="button is-primary">Search</button>
             </div>
+            <box class="errorbox box hide">Error: City not valid or UV index not available</box>
 
 
 
@@ -57,10 +59,10 @@
           <box class="box"><h1><strong>Current Weather:</strong></h1>
             <box class="box is-paddingless">
                 <h1 id="currentCity" class="is-size-3">Welcome! Search to get started!</h1><br>
-                <p id="currentTemp" class="is-size-1"></p><br>
-                <p id="currentHumid"></p><br>
-                <p id="currentWind"></p><br><br>
-                <p id="currentUV"></p>
+                <p id="currentTemp" class="is-size-1 currentDetails"></p><br>
+                <p id="currentHumid" class="currentDetails"></p><br>
+                <p id="currentWind" class="currentDetails"></p><br>
+                <p id="currentUV" class="currentDetails"></p><br><br> 
             </box>
             </box>
           <box class="box"><h1 class ="is-full clearfix"><div><strong>Five-Day Forecast:</strong></h1>
@@ -89,9 +91,23 @@
 </html>
 
 <script>
+    // Error message 
+    $(document).ajaxError(function() {
+    $(".errorbox").removeClass("hide");
+    });
     // On Click  function to initiate search
     $("#searchbutton").click(function(){
     
+    // Empty contents of past search 
+    $("#currentCity").empty();   
+    $("#currentUV").empty();
+    $("#currentTemp").empty();
+    $("#currentHumid").empty();
+    $("#currentWind").empty();
+
+    // Get rid of error message if Ajax worked
+    $(".errorbox").addClass("hide");
+
     // Storing data for Ajax call
     var userInput = $("#searchbar").val();
     var APIKey = "02daff08193d9225a26eb2edb0d88351";
@@ -104,26 +120,52 @@
     queryList.append(newBox.text(userInput));
     
 
-    // Ajax call for Weather API data
+    // Ajax call for Weather API
     $.ajax({
         method: "GET",
         url: queryURL
     }).then(function(response) {
         console.log(response);
 
-
+        
         // Storing relevant data from response
-        let currentCityName = response.name;
-        let currentHumid = response.main.humidity + "%";
-        let currentWind = (response.wind.speed * 2.23694).toFixed(2) +  " mph";
-        let currentTemp = (response.main.temp * 9/5 - 459.67).toFixed(0);
+        const currentCityName = response.name + " ("+ moment().format('MM/D/YYYY') + ")";
+        const currentHumid = "Humidity: " + response.main.humidity + "%";
+        const currentWind = "Wind Speed: " + (response.wind.speed * 2.23694).toFixed(2) +  " mph";
+        const currentTemp = (response.main.temp * 9/5 - 459.67).toFixed(0) + "°F";
 
         // Grab elements to display current city info
         $("#currentTemp").text(currentTemp);
         $("#currentCity").text(currentCityName);
         $("#currentHumid").text(currentHumid);
         $("#currentWind").text(currentWind);
+
+        // Storying some data for UV Ajax call
+        const currentLat = response.coord.lon;
+        const currentLong = response.coord.lat;
+        const UVquery = "http://api.openweathermap.org/data/2.5/uvi?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
+
+        // Ajax call for current UV index
+        $.ajax({
+            method: "GET",
+            url: UVquery
+        }).then(function(responseUV) {
+
+            console.log(responseUV);
+            // Store UVindex
+            const uvIndex = "UV index: " + responseUV.value;
+
+            // Display UV index
+            $("#currentUV").text(uvIndex);
+        });
+
+        
     })});
+
+
+ 
+
+
 
 </script>
 
