@@ -43,8 +43,8 @@
       </nav>
     <div class="columns">
 
-        <div id ="searchqueries" class="column is-one-quarter small-side">
-            <div class="box">
+        <div id ="searchqueries" class="column is-one-fifth small-side has-background-primary">
+            <div class="box has">
                 <p><strong>Which city?</strong></p>
                 <input id="searchbar" class="input" placeholder="Ex: New York City, NY">
                 <button id="searchbutton" class="button is-primary">Search</button>
@@ -55,33 +55,47 @@
 
         </div>
 
-        <div class="column is-three-quarters wide-side">
-          <box class="box"><h1><strong>Current Weather:</strong></h1>
+        <div class="column is-four-fifths wide-side">
+          <box class="box has-background-primary"><h1><strong></strong></h1>
             <box class="box is-paddingless">
-                <h1 id="currentCity" class="is-size-3">Welcome! Search to get started!</h1><br>
+                <h1 id="currentCity" class="is-size-3">Welcome! Today is <span id="today"> </span>.</h1><br>
+                <div id="icon"><img class="hide" id="currentIcon" src="" alt="Weather icon"></div>
                 <p id="currentTemp" class="is-size-1 currentDetails"></p><br>
                 <p id="currentHumid" class="currentDetails"></p><br>
                 <p id="currentWind" class="currentDetails"></p><br>
                 <p id="currentUV" class="currentDetails"></p><br><br> 
             </box>
             </box>
-          <box class="box"><h1 class ="is-full clearfix"><div><strong>Five-Day Forecast:</strong></h1>
-            <div class="tile is-ancestor is-gapless">
-                <div class="tile is-2 box five">
-                  Day one:
+          <box class="box columns has-background-primary"><h1 class ="is-full clearfix"><div><strong></strong></h1>
+                <div class="box is-2 box five column is-one-fifth">
+                    <strong><span id="oneDayFrom"></span><br></strong>
+                    <div id="icon"><img class="hide" id="oneIcon" src="" alt="Weather icon"></div>
+                  <p></p> <span id="oneDayTemp"></span><br>
+                  <p></p> <span id="oneDayHumid"></span><br>
                 </div>
-                <div class="tile is-2 box five">
-                Day two:
+                <div class="box is-2 box five column is-one-fifth">
+                   <strong><span id="twoDayFrom"></span><br></strong>
+                   <div id="icon"><img class="hide" id="twoIcon" src="" alt="Weather icon"></div>
+                   <span id="twoDayTemp"></span><br>
+                   <span id="twoDayHumid"></span><br>
                 </div>
-                <div class="tile is-2 box five">
-                    Day three:
+                <div class="box is-2 box five column is-one-fifth">
+                    <strong><span id="threeDayFrom"></span><br></strong>
+                    <div id="icon"><img class="hide" id="threeIcon" src="" alt="Weather icon"></div>
+                    <span id="threeDayTemp"></span><br>
+                    <span id="threeDayHumid"></span><br>
                 </div>
-                <div class="tile is-2 box five">
-                    Day four:
+                <div class="box is-2 box five column is-one-fifth">
+                    <strong><span id="fourDayFrom"></span><br></strong>
+                    <div id="icon"><img class="hide" id="fourIcon" src="" alt="Weather icon"></div>
+                    <span id="fourDayTemp"></span><br>
+                    <span id="fourDayHumid"></span><br>
                     </div>
-                    <div class="tile is-2 box five">
-                    Day five:
-                        </div>
+                <div class="box is-2 box five column is-one-fifth">
+                    <strong><span id="fiveDayFrom"></span><br></strong>
+                    <div id="icon"><img class="hide" id="fiveIcon" src="" alt="Weather icon"></div>
+                    <span id="fiveDayTemp"></span><br>
+                    <span id="fiveDayHumid"></span><br>
               </div>
 
         </box>
@@ -91,11 +105,21 @@
 </html>
 
 <script>
-    // Error message 
+
+    // Initialize page with dates
+    $("#today").html(moment().format('MM/D/YYYY'));
+    $("#oneDayFrom").html(moment().add(1,'days').format('MM/D/YYYY'));
+    $("#twoDayFrom").html(moment().add(2,'days').format('MM/D/YYYY'));
+    $("#threeDayFrom").html(moment().add(3,'days').format('MM/D/YYYY'));
+    $("#fourDayFrom").html(moment().add(4,'days').format('MM/D/YYYY'));
+    $("#fiveDayFrom").html(moment().add(5,'days').format('MM/D/YYYY'));
+
+
+    // Error message for unsuccessful Ajax call
     $(document).ajaxError(function() {
     $(".errorbox").removeClass("hide");
     });
-    
+
     // On Click  function to initiate search
     $("#searchbutton").click(function(){
     
@@ -119,7 +143,6 @@
     const newBox = $("<box>").attr("class","box");
     const queryList = $("#searchqueries");
     queryList.append(newBox.text(userInput));
-    
 
     // Ajax call for Weather API
     $.ajax({
@@ -128,22 +151,29 @@
     }).then(function(response) {
         console.log(response);
 
-        
+        // Reusable iconURL function
+        function iconToUrl(IconCode) {
+            return "http://openweathermap.org/img/w/" + IconCode + ".png";
+        }
+
         // Storing relevant data from response
         const currentCityName = response.name + " ("+ moment().format('MM/D/YYYY') + ")";
-        const currentHumid = "Humidity: " + response.main.humidity + "%";
-        const currentWind = "Wind Speed: " + (response.wind.speed * 2.23694).toFixed(2) +  " mph";
-        const currentTemp = (response.main.temp * 9/5 - 459.67).toFixed(0) + "°F";
+        const currentHumid = displayHumidity(response.main.humidity);
+        const currentWind = convertWind(response.wind.speed);
+        const currentTemp = convertKelvin(response.main.temp);
+        const currentIconCode = iconToUrl(response.weather[0].icon);
 
         // Grab elements to display current city info
+        $("#currentIcon").removeClass("hide");
+        $("#currentIcon").attr("src", currentIconCode);
         $("#currentTemp").text(currentTemp);
         $("#currentCity").text(currentCityName);
         $("#currentHumid").text(currentHumid);
         $("#currentWind").text(currentWind);
 
         // Storying data for UV Ajax call
-        const currentLat = response.coord.lon;
-        const currentLong = response.coord.lat;
+        const currentLat = response.coord.lat;
+        const currentLong = response.coord.lon;
         const UVquery = "http://api.openweathermap.org/data/2.5/uvi?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
 
         // Ajax call for current UV index
@@ -167,16 +197,80 @@
                 url: fiveQuery
             }).then(function(responseFive) {
                 console.log(responseFive);
+
+
+                //Store relevant temps
+                const dayOneTemp = convertKelvin(responseFive.list[6].main.temp);
+                const dayTwoTemp = convertKelvin(responseFive.list[13].main.temp);
+                const dayThreeTemp = convertKelvin(responseFive.list[20].main.temp);
+                const dayFourTemp = convertKelvin(responseFive.list[28].main.temp);
+                const dayFiveTemp = convertKelvin(responseFive.list[36].main.temp);
+
+                // Store relevant humidity
+                const dayOneHumid = displayHumidity(responseFive.list[6].main.humidity);
+                const dayTwoHumid = displayHumidity(responseFive.list[13].main.humidity);
+                const dayThreeHumid = displayHumidity(responseFive.list[20].main.humidity);
+                const dayFourHumid = displayHumidity(responseFive.list[28].main.humidity);
+                const dayFiveHumid = displayHumidity(responseFive.list[36].main.humidity);
+
+                // Store relevant icons
+                const oneIcon = iconToUrl(responseFive.list[6].weather[0].icon);
+                const twoIcon = iconToUrl(responseFive.list[13].weather[0].icon);
+                const threeIcon = iconToUrl(responseFive.list[20].weather[0].icon);
+                const fourIcon = iconToUrl(responseFive.list[28].weather[0].icon);
+                const fiveIcon = iconToUrl(responseFive.list[36].weather[0].icon);
+
+
+                // Display 5-day temps
+                $("#oneDayTemp").text(dayOneTemp);
+                $("#twoDayTemp").text(dayTwoTemp);
+                $("#threeDayTemp").text(dayThreeTemp);
+                $("#fourDayTemp").text(dayFourTemp);
+                $("#fiveDayTemp").text(dayFiveTemp);
+                
+
+                // Display 5-day humidity
+                $("#oneDayHumid").text(dayOneHumid);
+                $("#twoDayHumid").text(dayTwoHumid);
+                $("#threeDayHumid").text(dayThreeHumid);
+                $("#fourDayHumid").text(dayFourHumid);
+                $("#fiveDayHumid").text(dayFiveHumid);
+
+                // Display 5-day icons
+                $("#oneIcon").removeClass("hide");
+                $("#oneIcon").attr("src", oneIcon);
+
+                $("#twoIcon").removeClass("hide");
+                $("#twoIcon").attr("src", twoIcon);
+
+                $("#threeIcon").removeClass("hide");
+                $("#threeIcon").attr("src", threeIcon);
+
+                $("#fourIcon").removeClass("hide");
+                $("#fourIcon").attr("src", fourIcon);
+
+                $("#fiveIcon").removeClass("hide");
+                $("#fiveIcon").attr("src", fiveIcon);
+
             });
         });
 
         
     })});
+    
+    function convertKelvin(temp) {
+        return (temp * 9/5 - 459.67).toFixed(0) +  "°F";
+    }
 
+    function convertWind(speed) {
+        return "Wind speed: " + (speed * 2.23694).toFixed(2) + " mph";
+    }
 
- 
+    function displayHumidity(repsonseValue) {
+        return "Humidity: " + repsonseValue + "%";
+    }
 
-
-
+  
+    
 </script>
 

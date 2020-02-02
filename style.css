@@ -3,8 +3,7 @@ html {
 }
 
 .small-side {
-    background-color: #3AAFA9;
-    height: 120vh;
+    height: 200vh;
 }
 
 .button {
@@ -14,7 +13,7 @@ html {
 
 .wide-side {
     background-color: #DEF2f1;
-    height: 120vh;
+    height: 200vh;
 }
 
 .box {
@@ -53,4 +52,8 @@ input {
 
 .hide {
     display: none;
+}
+
+#currentIcon {
+    height: 100px;
 }
