@@ -57,3 +57,7 @@ input {
 #currentIcon {
     height: 100px;
 }
+
+.query:hover {
+    background-color:#3AAFA9;
+}

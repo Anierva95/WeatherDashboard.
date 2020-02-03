@@ -51,8 +51,6 @@
             </div>
             <box class="errorbox box hide">Error: City not valid or UV index not available</box>
 
-
-
         </div>
 
         <div class="column is-four-fifths wide-side">
@@ -120,8 +118,10 @@
     $(".errorbox").removeClass("hide");
     });
 
+
     // On Click  function to initiate search
-    $("#searchbutton").click(function(){
+     $(document).on('click', "#searchbutton, .query", function() {
+        console.log("hi");
     
     // Empty contents of past search 
     $("#currentCity").empty();   
@@ -140,7 +140,7 @@
     console.log(userInput);
     
     // Creating Bulma box for each past search query
-    const newBox = $("<box>").attr("class","box");
+    const newBox = $("<box>").attr("class","box query");
     const queryList = $("#searchqueries");
     queryList.append(newBox.text(userInput));
 
@@ -270,7 +270,6 @@
         return "Humidity: " + repsonseValue + "%";
     }
 
-  
     
 </script>
 
