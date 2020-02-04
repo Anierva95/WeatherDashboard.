@@ -118,9 +118,25 @@
     $(".errorbox").removeClass("hide");
     });
 
+    // Grabbing local storage and refreshing query buttons
+    var citiesArr = localStorage.getItem("cities");
+    citiesArr = JSON.parse(citiesArr);
+    if (!citiesArr){
+        citiesArr = [];
+    }
+
+    for (var i = 0; i < citiesArr.length; i++) {
+    const newBox = $("<box>").attr("class","box query");
+    const queryList = $("#searchqueries");
+    queryList.append(newBox.text(citiesArr[i]));
+    }
+
+
+    ///////////////// FROM HERE IS ON CLICK FUNCTION ///////////////////////////////
+
 
     // On Click  function to initiate search
-     $(document).on('click', "#searchbutton, .query", function() {
+     $(document).on('click', "#searchbutton, .query", function(event) {
         console.log("hi");
     
     // Empty contents of past search 
@@ -133,16 +149,29 @@
     // Get rid of error message if Ajax worked
     $(".errorbox").addClass("hide");
 
+
+    // BUG FIX: Chcek if someone clicks on the submit button or the past query and get proper input value
+    var userInput;
+    if($(this).attr("id") === "searchbutton") {
+        userInput = $("#searchbar").val();
+    } else {
+        userInput = $(this).text();
+    }
+
     // Storing data for Ajax call
-    var userInput = $("#searchbar").val();
     var APIKey = "02daff08193d9225a26eb2edb0d88351";
     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + userInput + "&appid=" + APIKey;
-    console.log(userInput);
     
     // Creating Bulma box for each past search query
+    if (!citiesArr){    
     const newBox = $("<box>").attr("class","box query");
     const queryList = $("#searchqueries");
     queryList.append(newBox.text(userInput));
+    
+    // Push to cities array and save to localStorage
+    citiesArr.push(userInput);
+    localStorage.setItem("cities",JSON.stringify(citiesArr));
+    }
 
     // Ajax call for Weather API
     $.ajax({
