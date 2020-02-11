@@ -145,6 +145,7 @@
     $("#currentTemp").empty();
     $("#currentHumid").empty();
     $("#currentWind").empty();
+    $("#currentUV").removeAttr('background-color');
 
     // Get rid of error message if Ajax worked
     $(".errorbox").addClass("hide");
@@ -217,6 +218,16 @@
 
             // Display UV index
             $("#currentUV").text(uvIndex);
+            $("#currentUV").css('color', 'white');
+
+            // Determine UV index
+            if (responseUV.value < 3) {
+              $("#currentUV").css('background-color','green');
+            } else if (responseUV.value > 3 && responseUV.value < 7) {
+              $("#currentUV").css('background-color','orange');
+            } else if (responseUV.value > 7) {
+              $("#currentUV").css('background-color', 'red');
+            }
 
             // Query for 5 day Forecast
             const fiveQuery = "http://api.openweathermap.org/data/2.5/forecast?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
