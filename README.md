@@ -8,6 +8,6 @@ Hello! This weather dashboard utilizes the OpenWeatherMap API to provide the use
   <li>Javascript</li>
   <li>JQuery</li>
   <li>Bulma</li>
-  <li>MomentJs</li>
-  <li>OpenWeatherMap</li>
+  <li>MomentJs API</li>
+  <li>OpenWeatherMap API</li>
   </ol>
