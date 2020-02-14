@@ -183,7 +183,7 @@
 
         // Reusable iconURL function
         function iconToUrl(IconCode) {
-            return "http://openweathermap.org/img/w/" + IconCode + ".png";
+            return "https://openweathermap.org/img/w/" + IconCode + ".png";
         }
 
         // Storing relevant data from response
@@ -204,7 +204,7 @@
         // Storying data for UV Ajax call
         const currentLat = response.coord.lat;
         const currentLong = response.coord.lon;
-        const UVquery = "http://api.openweathermap.org/data/2.5/uvi?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
+        const UVquery = "https://api.openweathermap.org/data/2.5/uvi?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
 
         // Ajax call for current UV index
         $.ajax({
@@ -230,7 +230,7 @@
             }
 
             // Query for 5 day Forecast
-            const fiveQuery = "http://api.openweathermap.org/data/2.5/forecast?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
+            const fiveQuery = "https://api.openweathermap.org/data/2.5/forecast?lat=" + currentLat + "&lon=" + currentLong + "&appid=" + APIKey;
 
             $.ajax({
                 method: "GET",
